@@ -35,5 +35,17 @@ func main() {
 		w.WriteHeader(200)
 	})
 
+	http.HandleFunc("/config", func(w http.ResponseWriter, _ *http.Request) {
+		dbPass := os.Getenv("DB_PASSWORD")
+		masked := "not set"
+		if len(dbPass) > 0 {
+			masked = dbPass[:3] + "***" // Show first 3 chars only
+		}
+		fmt.Fprintf(w, "APP_NAME: %s\nAPP_READY: %s\nDB_PASSWORD: %s\n",
+			os.Getenv("APP_NAME"),
+			os.Getenv("APP_READY"),
+			masked)
+	})
+
 	http.ListenAndServe(":8080", nil)
 }
